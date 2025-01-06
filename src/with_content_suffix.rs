@@ -3,6 +3,7 @@ macro_rules! with_content_suffix {
     ($module:ident $suffix:expr) => {
         mod $module {
             use serde::{Deserializer, Serializer};
+            use serde::de::Unexpected;
 
             pub fn serialize<S>(s: &u8, serializer: S) -> Result<S::Ok, S::Error>
             where
@@ -31,8 +32,13 @@ macro_rules! with_content_suffix {
                 where
                     E: serde::de::Error,
                 {
-                    // TODO Should verify the suffix is correct
-                    Ok(s[..s.len()-$suffix.len()].parse().unwrap())
+                    let suffix_len = $suffix.len();
+                    let s_len = s.len();
+                    if (s_len >= suffix_len && &s[(s_len - suffix_len)..] == $suffix) {
+                        Ok(s[..s.len()-$suffix.len()].parse().unwrap())
+                    } else {
+                        Err(serde::de::Error::invalid_value(Unexpected::Str(s), &"string with a specific suffix"))
+                    }
                 }
             }
         }
