@@ -23,12 +23,13 @@ macro_rules! with_content_suffix {
                 let suffix_len = $suffix.len();
                 let s_len = s.len();
                 if (s_len >= suffix_len && &s[(s_len - suffix_len)..] == $suffix) {
-                    match s[..s.len()-$suffix.len()].parse::<T>() {
+                    let s_removed_suffix = &s[..s.len()-$suffix.len()];
+                    match s_removed_suffix.parse::<T>() {
                         Ok(v) => Ok(v),
-                        Err(_) => Err(Error::invalid_value(Unexpected::Str(&s), &"to be parsable")),
+                        Err(_) => Err(Error::invalid_value(Unexpected::Str(s_removed_suffix), &"to be parsable to its native type")),
                     }
                 } else {
-                    Err(Error::invalid_value(Unexpected::Str(&s), &"string with a specific suffix"))
+                    Err(Error::invalid_value(Unexpected::Str(&s), &"string with a proper suffix"))
                 }
             }
 
@@ -48,28 +49,6 @@ macro_rules! with_content_suffix {
                     Ok(s.to_string())
                 }
             }
-
-            // TODO Deprecated
-            // impl<'de> serde::de::Visitor<'de> for Visitor {
-            //     type Value = u8;
-            //
-            //     fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-            //         formatter.write_str("a parsable value after removing the suffix")
-            //     }
-            //
-            //     fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-            //     where
-            //         E: serde::de::Error,
-            //     {
-            //         let suffix_len = $suffix.len();
-            //         let s_len = s.len();
-            //         if (s_len >= suffix_len && &s[(s_len - suffix_len)..] == $suffix) {
-            //             Ok(s[..s.len()-$suffix.len()].parse().unwrap())
-            //         } else {
-            //             Err(serde::de::Error::invalid_value(Unexpected::Str(s), &"string with a specific suffix"))
-            //         }
-            //     }
-            // }
         }
     };
 }
