@@ -4,16 +4,19 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 struct MyStruct {
-    // So this does add a prefix to the content instead of the field name
     #[serde(with = "content_suffix_kek")]
-    key: u8
+    key1: u8,
+
+    #[serde(with = "content_suffix_kek")]
+    key2: i16,
 }
 
 with_content_suffix!(content_suffix_kek "_kek");
 
 fn main() {
     let my_struct = MyStruct {
-        key: 123,
+        key1: 123,
+        key2: 456,
     };
 
     let serialized = serde_json::to_string(&my_struct).unwrap();
