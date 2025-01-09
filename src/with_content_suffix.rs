@@ -3,7 +3,7 @@ macro_rules! with_content_suffix {
     ($module:ident $suffix:expr) => {
         mod $module {
             use std::str::FromStr;
-            use serde::{Deserializer, Serializer};
+            use serde::{Deserializer, Serializer, Deserialize};
             use serde::de::{Error, Unexpected};
 
             pub fn serialize<S, T>(s: &T, serializer: S) -> Result<S::Ok, S::Error>
@@ -19,7 +19,7 @@ macro_rules! with_content_suffix {
                 D: Deserializer<'de>,
                 T: FromStr,
             {
-                let s: String = d.deserialize_str(Visitor)?.parse().unwrap();
+                let s: String = String::deserialize(d)?.parse().unwrap();
                 let suffix_len = $suffix.len();
                 let s_len = s.len();
                 if (s_len >= suffix_len && &s[(s_len - suffix_len)..] == $suffix) {
@@ -30,23 +30,6 @@ macro_rules! with_content_suffix {
                     }
                 } else {
                     Err(Error::invalid_value(Unexpected::Str(&s), &"string with a proper suffix"))
-                }
-            }
-
-            struct Visitor;
-
-            impl<'de> serde::de::Visitor<'de> for Visitor {
-                type Value = String;
-
-                fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                    formatter.write_str("a string")
-                }
-
-                fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-                where
-                    E: serde::de::Error,
-                {
-                    Ok(s.to_string())
                 }
             }
         }
