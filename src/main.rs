@@ -2,7 +2,7 @@ mod serde_with_affix;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize)]
 struct MyStruct {
     #[serde(with = "content_suffix_kek")]
     key1: u8,
