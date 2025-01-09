@@ -1,4 +1,4 @@
-mod with_content_suffix;
+mod serde_with_affix;
 
 use serde::{Deserialize, Serialize};
 
@@ -11,7 +11,7 @@ struct MyStruct {
     key2: i16,
 }
 
-with_content_suffix!(content_suffix_kek "_kek");
+with_affix!(content_suffix_kek Suffix "_kek");
 
 fn main() {
     let my_struct = MyStruct {
@@ -20,6 +20,7 @@ fn main() {
     };
 
     let serialized = serde_json::to_string(&my_struct).unwrap();
+    // let serialized = r#"{"key1":"123a_kek","key2":"456_kek"}"#;
     println!("serialized (json): {serialized}");
 
     let deserialized = serde_json::from_str::<MyStruct>(&serialized).unwrap();
