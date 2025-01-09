@@ -1,7 +1,15 @@
 [package]
-name = "serde-with-value-affix"
+name = "serde_with_value_affix"
 version = "0.1.0"
+authors = ["detoo <daily.detoo@gmail.com>"]
 edition = "2021"
+categories = ["encoding", "no-std"]
+description = "Custom affix modules for serde"
+documentation = "https://docs.rs/serde_with_value_affix"
+keywords = ["serde", "serialization", "deserialization"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Detoo/serde-with-value-affix"
+rust-version = "1.78"
 
 [dependencies]
 serde = { version = "1.0.217", features = ["derive"] }
